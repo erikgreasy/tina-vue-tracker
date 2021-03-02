@@ -19,7 +19,7 @@ export default {
     trackPosition() {
       if (navigator.geolocation) {
         navigator.geolocation.watchPosition(this.successPosition, this.failurePosition, {
-        //   enableHighAccuracy: true,
+          enableHighAccuracy: true,
           timeout: 15000,
           maximumAge: 0,
         })
