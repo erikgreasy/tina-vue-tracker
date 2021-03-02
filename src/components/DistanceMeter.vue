@@ -1,7 +1,7 @@
 <template>
   <div id="tracking">
       <div>
-          speed: <span class="speed">{{ this.speed }}</span>
+          speed: <span class="speed">{{ this.speed }}</span>kmh
       </div>
       <div>
         <!-- distance: {{ this.distance }} -->
@@ -37,7 +37,7 @@ export default {
 
         if( position.coords.speed ) {
 
-            this.speed = position.coords.speed;
+            this.speed = position.coords.speed*18/5;
         } else {
             this.speed = 0
         }
