@@ -37,7 +37,7 @@ export default {
 
         if( position.coords.speed ) {
 
-            this.speed = position.coords.speed*18/5;
+            this.speed = parseFloat( position.coords.speed*18/5 ).toFixed(2);
         } else {
             this.speed = 0
         }
