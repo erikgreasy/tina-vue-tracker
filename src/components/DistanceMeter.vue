@@ -35,9 +35,9 @@ export default {
         console.log( position.coords )
         
 
-        var lastCoords = this.positions.pop();
 
         if( this.positions.length > 0 ) {
+          var lastCoords = this.positions.pop();
           this.distance += this.countDistance( lastCoords.lat, lastCoords.long, position.coords.latitude, position.coords.longitude )
         }
 
