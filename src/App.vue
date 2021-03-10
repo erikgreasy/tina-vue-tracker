@@ -5,8 +5,14 @@
 
             <Speedometer :speed="this.speed"/>
             <Distance-meter :distance="this.distance"/>
-      
+
+
+            <button @click="this.trackPosition">Track</button>
+            <button @click="this.stopTracking">Stop tracking</button>
+
             <!-- {{ positions }} -->
+            <button @click="makeRequest">Request</button>
+            <div class="request-output"></div>
         </div>
     </div>
 </template>
@@ -15,6 +21,7 @@
 import Speedometer from './components/Speedometer.vue';
 import Clock from './components/Clock.vue';
 import DistanceMeter from './components/DistanceMeter.vue';
+const axios = require('axios').default;
 
 export default {
     name: 'App',
@@ -24,10 +31,23 @@ export default {
         Speedometer
     },
     methods: {
-    
+        stopTracking() {
+            navigator.geolocation.clearWatch(this.trackId);
+            alert('tracking stopped');
+        },
+        makeRequest() {
+            axios.post('handle.php')
+                .then((res)=>{
+                    console.log(res.data)
+                }) 
+                .catch(err=>{
+
+                        alert(err)
+                })
+        },
         trackPosition() {
             if (navigator.geolocation) {
-                navigator.geolocation.watchPosition(this.successPosition, this.failurePosition, {
+                this.trackId = navigator.geolocation.watchPosition(this.successPosition, this.failurePosition, {
                 enableHighAccuracy: true,
                 timeout: 15000,
                 maximumAge: 0,
@@ -90,10 +110,11 @@ export default {
             speed: 0,
             distance: 0,
             timePassed: 0,
+            trackId: null,
         }
     },
     mounted() {
-        this.trackPosition()
+        // this.trackPosition()
         
     },
 }
