@@ -1,6 +1,5 @@
 <template>
     <div>
-        <!-- {{ timePassed/1000 }} -->
         <!-- https://www.cssscript.com/animated-digital-led-clock-with-javascript-and-css/ -->
         <div class="clock">
         <div class="digit hours">
@@ -77,6 +76,18 @@ export default {
     props: [
         'timePassed'
     ],
+    watch: {
+      timePassed: function(oldVal, newVal) {
+        console.log(oldVal)
+        if(newVal != null) {
+          this.setClock(newVal);
+        } else {
+          this.setClock(oldVal)
+        }
+
+        console.log(oldVal)
+      }
+    },
     data() {
         return {
 
@@ -92,7 +103,6 @@ export default {
                 [1,2,3,4,5,6,7],
                 [1,2,7,3,6]
             ],
-            seconds: 0
         }
     },
     methods: {
@@ -122,29 +132,38 @@ export default {
                 }, 250);
                 digit.setAttribute('data-value', number);
             }
-        }
-    },
-     
-    mounted() {
-        var self = this;
-        
-        setInterval(function() {
+        },
+        setClock(seconds) {
             var _hours = document.querySelectorAll('.hours');
             var _minutes = document.querySelectorAll('.minutes');
             var _seconds = document.querySelectorAll('.seconds');
 
-            self.setNumber(_hours[0], Math.floor(self.seconds/10));
-            self.setNumber(_hours[1], self.seconds%10);
+            var self = this;
 
-            self.setNumber(_minutes[0], Math.floor(self.seconds/10));
-            self.setNumber(_minutes[1], self.seconds%10);
+            let hours = Math.floor(seconds/360);
+            seconds -= 360*hours;
 
+            let minutes = Math.floor(seconds/60);
+            seconds = seconds - 60*minutes;
 
-            self.setNumber(_seconds[0], Math.floor(self.seconds/10) );
-            self.setNumber(_seconds[1], self.seconds%10);
-            self.seconds++;
-        }, 1000);
-    }
+            self.setNumber(_hours[0], Math.floor(hours/10));
+            self.setNumber(_hours[1], hours%10);
+
+            self.setNumber(_minutes[0], Math.floor(minutes/10));
+            self.setNumber(_minutes[1], minutes%10);
+
+            self.setNumber(_seconds[0], Math.floor(seconds/10) );
+            self.setNumber(_seconds[1], seconds%10);
+            console.log('over');
+        }
+    },
+    // mounted() {
+    //     this.setClock(this.timePassed)
+    // },
+    // updated() {
+    //     this.setClock(this.timePassed)
+        
+    // }
 }
 
 </script>
@@ -154,11 +173,7 @@ export default {
 .clock {
   height:200px;
   position:relative;
-  /* top:50%; */
-  /* left:50%; */
   width:900px;
-  /* margin-left:-450px; */
-  /* margin-top:-100px; */
   text-align:center;
 }
 

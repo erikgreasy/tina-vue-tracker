@@ -2,6 +2,7 @@
     <div>
         Distance: <span class="distance">{{ distance }}</span>km
         <div id="tester" style="width:600px;height:250px;"></div>
+        {{getgraph}}
     </div>
 </template>
 <script>
@@ -9,7 +10,7 @@ import Plotly from 'plotly.js-dist';
 
 export default {
     name: 'DistanceMeter',
-    props: ['distance'],
+    props: ['distance', 'getgraph'],
     watch: {
         distance: function(newVal, oldVal) {
             console.log(`New: ${newVal}, old: ${oldVal}`);
@@ -32,8 +33,16 @@ export default {
     },
     mounted() {
         this.TESTER = document.getElementById('tester')
-        Plotly.newPlot( this.TESTER, [this.graph], {
-        margin: { t: 0 } } );
+        
+            Plotly.newPlot( this.TESTER, [this.graph], {
+                margin: { t: 0 } } );
+    },
+    updated() {
+        if( this.getgraph != null ) {
+
+            Plotly.newPlot( this.TESTER, [this.getgraph], {
+                margin: { t: 0 } } );
+        }
     }
 }
 </script>
