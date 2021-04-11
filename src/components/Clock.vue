@@ -171,16 +171,17 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .clock {
-  height:200px;
+  /* height:200px; */
   position:relative;
-  width:900px;
+  width:100%;
   text-align:center;
+  margin-bottom: 30px;
 }
 
 .digit {
-  width:80px;
-  height:110px;
-  margin:0 5px;
+  width:50px;
+  height:70px;
+  margin:0;
   position:relative;
   display:inline-block;
 }
@@ -208,8 +209,8 @@ export default {
 }
 
 .separator {
-  width:10px;
-  height:10px;
+  width:5px;
+  height:5px;
   background:#c00;
   border-radius:50%;
   display:inline-block;
@@ -219,55 +220,55 @@ export default {
 
 .digit .segment:nth-child(1) {
   top:10px;
-  left:20px;
-  right:20px;
-  height:5px;
+  left:15px;
+  right:15px;
+  height: 3px;
 }
 
 .digit .segment:nth-child(2) {
-  top:20px;
+  top:15px;
   right:10px;
-  width:5px;
-  height:75px;
-  height:calc(50% - 25px);
+  width:3px;
+  height:50px;
+  height:calc(50% - 20px);
 }
 
 .digit .segment:nth-child(3) {
-  bottom:20px;
+  bottom:14px;
   right:10px;
-  width:5px;
+  width:3px;
   height:75px;
-  height:calc(50% - 25px);
+  height:calc(50% - 20px);
 }
 
 .digit .segment:nth-child(4) {
   bottom:10px;
-  right:20px;
-  height:5px;
-  left:20px;
+  right:15px;
+  height:3px;
+  left:15px;
 }
 
 .digit .segment:nth-child(5) {
-  bottom:20px;
+  bottom:15px;
   left:10px;
-  width:5px;
+  width:3px;
   height:75px;
-  height:calc(50% - 25px);
+  height:calc(50% - 20px);
 }
 
 .digit .segment:nth-child(6) {
   top:20px;
   left:10px;
-  width:5px;
+  width:3px;
   height:75px;
-  height:calc(50% - 25px);
+  height:calc(50% - 20px);
 }
 
 .digit .segment:nth-child(7) {
   bottom:95px;
   bottom:calc(50% - 5px);
-  right:20px;
-  left:20px;
-  height:5px;
+  right:15px;
+  left:15px;
+  height:3px;
 }
 </style>

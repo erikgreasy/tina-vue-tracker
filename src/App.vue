@@ -30,7 +30,15 @@
 <style>
 
 main {
-    padding: 100px 0;
+    padding: 50px 0;
+}
+
+@media screen and (min-width: 992px) {
+    
+    main {
+        padding: 100px 0;
+    }
+
 }
 
 </style>

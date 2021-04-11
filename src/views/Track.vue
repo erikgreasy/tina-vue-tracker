@@ -1,17 +1,28 @@
 <template>
-    <div>
-        <h1>Track your trip</h1>
-        <div id="tracking">
+    <div class="row">
+        <div class="col-sm-12 offset-lg-2 col-lg-8 text-center">
 
-            <Clock :timePassed="this.timePassed" />
+            <h1>Track your trip</h1>
+            <div id="tracking" class="row">
 
-            <Speedometer :speed="this.speed"/>
-            <Distance-meter :distance="this.distance"/>
+                <div class="col-12">
+                    <Clock :timePassed="this.timePassed" />
+                </div>
 
-            <button @click="this.trackPosition" id="track">Track</button>
-            <button @click="this.stopTracking" id="stop">Stop tracking</button>
+                <div class="col-6">
+                    <Speedometer :speed="this.speed"/>
+                </div>
 
-    </div>
+                <div class="col-6">
+                    <Distance-meter :distance="this.distance"/>
+                </div>
+
+                <button @click="this.trackPosition" id="track" class="btn btn-info btn-block">Track</button>
+                <button @click="this.stopTracking" id="stop" class="btn btn-danger btn-block">Stop tracking</button>
+
+            </div>
+
+        </div>
 
     </div>
 </template>
@@ -21,6 +32,7 @@
 import Speedometer from './../components/Speedometer.vue';
 import Clock from './../components/Clock.vue';
 import DistanceMeter from './../components/DistanceMeter.vue';
+import db from '../firebaseinit';
 
 const axios = require('axios').default;
 
@@ -31,7 +43,6 @@ export default {
         Clock,
         DistanceMeter,
         Speedometer,
-        // SingleTrip
     },
     data() {
         return {
@@ -61,6 +72,12 @@ export default {
                 .catch(err => {
                     console.log(err)
                 })
+            db.ref('trips/' + this.tripId + '/logs').push({
+                speed: this.speed,
+                distance: this.distance,
+                timePassed: this.timePassed,
+            });
+
             document.querySelector( '#stop' ).classList = 'd-none';
 
             window.location.href = window.location.origin + '/single/' + this.tripId;
@@ -73,20 +90,25 @@ export default {
                     if( res ) {
                         this.tripId = res.data
                         this.trackId = navigator.geolocation.watchPosition(this.successPosition, this.failurePosition, {
-                        enableHighAccuracy: true,
-                        timeout: 15000,
-                        maximumAge: 0,
+                            enableHighAccuracy: true,
+                            timeout: 15000,
+                            maximumAge: 0,
                         })
+                        db.ref('trips/' + this.tripId).set({
+                            start_time: new Date().getTime(),
+                        });
                     }
                 })
                 .catch(err => {
                     console.log(err)
                 })
                 
+                
+
                 let self = this;
                 this.intervalId = setInterval(function() {
                     self.timePassed += 1;
-                    console.log(self.timePassed)
+                    // console.log(self.timePassed)
                 }, 1000)
 
                 
@@ -135,10 +157,13 @@ export default {
                     console.log(err)
                 })
 
-            // db.collection('logs').add({
-            //     speed: this.speed,
-            //     distance: this.distance,
-            // })
+
+            db.ref('trips/' + this.tripId + '/logs').push({
+                speed: this.speed,
+                distance: this.distance,
+                timePassed: this.timePassed,
+            });
+            
         },
 
         failurePosition: function(err) {

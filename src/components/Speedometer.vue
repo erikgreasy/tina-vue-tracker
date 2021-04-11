@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="speedometer">
         <v-gauge :value="speed" :decimalPlace="2" :unit="'KM/H'" :width="'300px'" />
     </div>
 </template>
@@ -28,6 +28,9 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style>
+.speedometer {
+    margin-bottom: 30px;
+}
     .speed {
         font-size: 50px;
     }

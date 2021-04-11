@@ -1,8 +1,6 @@
 <template>
     <div>
-        Distance: <span class="distance">{{ distance }}</span>km
         <div id="tester" style="width:600px;height:250px;"></div>
-        {{getgraph}}
     </div>
 </template>
 <script>
@@ -48,5 +46,7 @@ export default {
 </script>
 
 <style scoped>
-  
+  #tester {
+      max-width: 100%;
+  }
 </style>
