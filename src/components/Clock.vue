@@ -154,16 +154,9 @@ export default {
 
             self.setNumber(_seconds[0], Math.floor(seconds/10) );
             self.setNumber(_seconds[1], seconds%10);
-            console.log('over');
         }
     },
-    // mounted() {
-    //     this.setClock(this.timePassed)
-    // },
-    // updated() {
-    //     this.setClock(this.timePassed)
-        
-    // }
+
 }
 
 </script>

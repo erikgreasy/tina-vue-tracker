@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h1 class="text-center">Trip {{ trip.start_time }}</h1>
+        <h1 class="text-center">Trip {{ trip.created_at }}</h1>
         <div id="graph"></div>
 
         <div>
@@ -11,9 +11,11 @@
 
 <script>
 import Plotly from 'plotly.js-dist';
-
+import db from '../firebaseinit';
+import dbEngine from '../dbConfig';
 
 const axios = require('axios').default;
+
 
 export default {
     components: {
@@ -21,7 +23,7 @@ export default {
     },
     data() {
         return {
-            trip: {start_time: ''},
+            trip: {created_at: ''},
             time: [],
             distance: {
                 x: [],
@@ -36,47 +38,60 @@ export default {
             graphEl: null
         }
     },
-    created() {
-        axios.get('/get_trip.php?id=' + this.$route.params.id)
-        .then(res => {
-            console.log(res.data)
-            this.trip = res.data.trip;
-            console.log(this.trip);
+    mounted() {
+        if( dbEngine.dbEngine == 'firebase') {
+            db.ref('trips/' + this.$route.params.id).get()
+                .then(snap => {
+                    this.trip = snap.val();
+                    this.trip.logs = Object.values( this.trip.logs );
+                    console.log(this.trip)
+                    this.trip.logs.forEach(log => {
+                        // console.log(log)
+                        this.distance.x.push(log.timepassed);
+                        this.speed.x.push(log.timepassed);
 
-            res.data.logs.forEach(log => {
-                this.distance.x.push(log.timepassed);
-                this.speed.x.push(log.timepassed);
+                        this.distance.y.push(log.distance);
+                        this.speed.y.push(log.speed);
+                    })
 
-                this.distance.y.push(log.distance);
-                this.speed.y.push(log.speed);
-            });
+                    this.graphEl = document.getElementById('graph');
+                    console.log(this.distance)
+                    Plotly.newPlot( this.graphEl, [this.distance, this.speed], {
+                        margin: { t: 0 } } );
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+        } else {
 
+            axios.get('https://tinaapi.greasydesign.sk/api/trip/' + this.$route.params.id)
+            .then(res => {
+                this.trip = res.data;
+    
+                this.trip.logs.forEach(log => {
+                    this.distance.x.push(log.timepassed);
+                    this.speed.x.push(log.timepassed);
+    
+                    this.distance.y.push(log.distance);
+                    this.speed.y.push(log.speed);
+                });
+    
+    
+                this.graphEl = document.getElementById('graph');
+                console.log(this.distance)
+                Plotly.newPlot( this.graphEl, [this.distance, this.speed], {
+                    margin: { t: 0 } } );
+    
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        }
 
-            this.graphEl = document.getElementById('graph');
-        
-            Plotly.newPlot( this.graphEl, [this.distance, this.speed], {
-                margin: { t: 0 } } );
-
-            console.log(this.time)
-            
-            // distance.forEach(dis => {
-            //     // this.distance = parseInt(dis.distance);
-            //     this.graph.x.push(this.x);
-            //     this.x += 1;
-
-            //     this.graph.y.push( parseInt(dis.distance) );
-            // });
-        })
-        .catch(err => {
-            console.log(err)
-        })
 
 
     },
 
-    mounted() {
-        
-    }
 
 
 }

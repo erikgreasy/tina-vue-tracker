@@ -1,6 +1,6 @@
 <template>
     <div class="row">
-        <div class="col-sm-12 offset-lg-2 col-lg-8 text-center">
+        <div class="col-sm-12 offset-lg-1 col-lg-10 text-center">
 
             <h1>Track your trip</h1>
             <div id="tracking" class="row">
@@ -9,11 +9,11 @@
                     <Clock :timePassed="this.timePassed" />
                 </div>
 
-                <div class="col-6">
+                <div class="col-lg-6">
                     <Speedometer :speed="this.speed"/>
                 </div>
 
-                <div class="col-6">
+                <div class="col-lg-6">
                     <Distance-meter :distance="this.distance"/>
                 </div>
 
@@ -33,6 +33,8 @@ import Speedometer from './../components/Speedometer.vue';
 import Clock from './../components/Clock.vue';
 import DistanceMeter from './../components/DistanceMeter.vue';
 import db from '../firebaseinit';
+import dbEngine from '../dbConfig';
+
 
 const axios = require('axios').default;
 
@@ -60,55 +62,76 @@ export default {
         stopTracking() {
             navigator.geolocation.clearWatch(this.trackId);
             clearInterval(this.intervalId);
-            axios.post('add_log.php', {
-                    trip_id: this.tripId,
+
+            if( dbEngine.dbEngine == 'firebase' ) {
+                db.ref('trips/' + this.tripId + '/logs').push({
                     speed: this.speed,
                     distance: this.distance,
-                    timepassed: this.timePassed
-                })
-                .then(res => {
-                    console.log(res)
-                })
-                .catch(err => {
-                    console.log(err)
-                })
-            db.ref('trips/' + this.tripId + '/logs').push({
-                speed: this.speed,
-                distance: this.distance,
-                timePassed: this.timePassed,
-            });
+                    timepassed: this.timePassed,
+                });
+            } else {
+                axios.post('https://tinaapi.greasydesign.sk/api/logs', {
+                        trip_id: this.tripId,
+                        speed: this.speed,
+                        distance: this.distance,
+                        timepassed: this.timePassed
+                    })
+                    .then(res => {
+                        console.log(res)
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
+            }
+
+            
 
             document.querySelector( '#stop' ).classList = 'd-none';
 
-            window.location.href = window.location.origin + '/single/' + this.tripId;
+            this.$router.push('/single/' + this.tripId);
 
         },
         trackPosition() {
             if (navigator.geolocation) {
-                axios.post('add_trip.php')
-                .then(res => {
-                    if( res ) {
-                        this.tripId = res.data
-                        this.trackId = navigator.geolocation.watchPosition(this.successPosition, this.failurePosition, {
-                            enableHighAccuracy: true,
-                            timeout: 15000,
-                            maximumAge: 0,
-                        })
-                        db.ref('trips/' + this.tripId).set({
-                            start_time: new Date().getTime(),
-                        });
-                    }
-                })
-                .catch(err => {
-                    console.log(err)
-                })
+
+                if( dbEngine.dbEngine == 'firebase' ) {
+                    let date = new Date();
+                    let id = db.ref('trips/').push({
+                        created_at: date.toISOString(),
+                        logs: []
+                    });
+                    this.tripId = id.key
+                    this.trackId = navigator.geolocation.watchPosition(this.successPosition, this.failurePosition, {
+                        enableHighAccuracy: true,
+                        timeout: 15000,
+                        maximumAge: 0,
+                    })
+                } else {
+                    
+                    axios.post('https://tinaapi.greasydesign.sk/api/trips')
+                    .then(res => {
+                        if( res ) {
+                            this.tripId = res.data.id
+                            this.trackId = navigator.geolocation.watchPosition(this.successPosition, this.failurePosition, {
+                                enableHighAccuracy: true,
+                                timeout: 15000,
+                                maximumAge: 0,
+                            })
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
+                }
+
+
+
                 
                 
 
                 let self = this;
                 this.intervalId = setInterval(function() {
                     self.timePassed += 1;
-                    // console.log(self.timePassed)
                 }, 1000)
 
                 
@@ -127,8 +150,8 @@ export default {
 
 
             if( this.positions.length > 0 ) {
-            var lastCoords = this.positions.pop();
-            this.distance += this.countDistance( lastCoords.lat, lastCoords.long, position.coords.latitude, position.coords.longitude )
+                var lastCoords = this.positions.pop();
+                this.distance += this.countDistance( lastCoords.lat, lastCoords.long, position.coords.latitude, position.coords.longitude )
             }
 
 
@@ -144,25 +167,29 @@ export default {
             }
 
          
-            axios.post('add_log.php', {
-                    trip_id: this.tripId,
+            
+
+
+            if( dbEngine.dbEngine == 'firebase' ) {
+                db.ref('trips/' + this.tripId + '/logs').push({
                     speed: this.speed,
                     distance: this.distance,
-                    timepassed: this.timePassed
-                })
-                .then(res => {
-                    console.log(res)
-                })
-                .catch(err => {
-                    console.log(err)
-                })
-
-
-            db.ref('trips/' + this.tripId + '/logs').push({
-                speed: this.speed,
-                distance: this.distance,
-                timePassed: this.timePassed,
-            });
+                    timepassed: this.timePassed,
+                });
+            } else {
+                axios.post('https://tinaapi.greasydesign.sk/api/logs', {
+                        trip_id: this.tripId,
+                        speed: this.speed,
+                        distance: this.distance,
+                        timepassed: this.timePassed
+                    })
+                    .then(res => {
+                        console.log(res)
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
+            }
             
         },
 

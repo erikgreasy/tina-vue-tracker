@@ -1,9 +1,9 @@
 <template>
     <div>
         <h1>Past trips:</h1>
-        <ul v-for="trip in trips" :key="trip.id">
+        <ul v-for="(trip, index) in trips" :key="index">
             <li>
-                <router-link :to="{ name: 'SingleTrip', params: {id: trip.id} }">{{ trip.start_time }}</router-link>
+                <router-link :to="{ name: 'SingleTrip', params: {id: index} }">{{ trip.created_at }}</router-link>
             </li>
         </ul>
     </div>
@@ -11,6 +11,9 @@
 
 <script>
 const axios = require('axios').default;
+import db from '../firebaseinit';
+import dbEngine from '../dbConfig';
+
 
 export default {
     data() {
@@ -19,13 +22,26 @@ export default {
         }
     },
     created() {
-        axios.get('all_trips.php')
-        .then(res => {
-            this.trips = res.data;
-        })
-        .catch(err => {
-            console.log(err)
-        })
+
+        if( dbEngine.dbEngine == 'firebase' ) {
+            db.ref('trips/').get()
+                .then(snap => {
+                    this.trips = snap.val()
+                    console.log(this.trips)
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+        } else {
+            axios.get('https://tinaapi.greasydesign.sk/api/trips')
+            .then(res => {
+                this.trips = res.data;
+            })
+            .catch(err => {
+                
+                console.log(err)
+            })
+        }
     }
     
 }
