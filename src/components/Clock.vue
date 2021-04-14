@@ -134,6 +134,7 @@ export default {
             }
         },
         setClock(seconds) {
+            seconds = parseInt(seconds)
             var _hours = document.querySelectorAll('.hours');
             var _minutes = document.querySelectorAll('.minutes');
             var _seconds = document.querySelectorAll('.seconds');
@@ -156,6 +157,7 @@ export default {
             self.setNumber(_seconds[1], seconds%10);
         }
     },
+    
 
 }
 

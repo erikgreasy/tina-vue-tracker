@@ -56,12 +56,16 @@ export default {
             trackId: null,
             tripId: null,
             intervalId: null,
+            startTiem: null
         }
     },
     methods: {
         stopTracking() {
             navigator.geolocation.clearWatch(this.trackId);
             clearInterval(this.intervalId);
+            var actTime = performance.now()
+            self.timePassed = ( (actTime - this.startTiem)/1000 )
+
 
             if( dbEngine.dbEngine == 'firebase' ) {
                 db.ref('trips/' + this.tripId + '/logs').push({
@@ -131,7 +135,8 @@ export default {
 
                 let self = this;
                 this.intervalId = setInterval(function() {
-                    self.timePassed += 1;
+                    var actTime = performance.now()
+                    self.timePassed = ( (actTime - self.startTiem)/1000 )
                 }, 1000)
 
                 
@@ -145,8 +150,8 @@ export default {
         },
 
         successPosition: function(position) {
-            console.log( position.coords )
             
+
 
 
             if( this.positions.length > 0 ) {
@@ -217,8 +222,8 @@ export default {
     },
     computed: {},
     
-    mounted() {
-
+    created() {
+        this.startTiem = performance.now()
      
 
     },

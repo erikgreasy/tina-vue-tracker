@@ -1,3 +1,3 @@
 export default {
-    dbEngine: 'firebase'
+    dbEngine: 'mysql'
 }

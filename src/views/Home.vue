@@ -2,9 +2,14 @@
     <div>
         <h1>Past trips:</h1>
         <ul v-for="(trip, index) in trips" :key="index">
-            <li>
+            <li v-if="dbEngine.dbEngine == 'firebase'">
                 <router-link :to="{ name: 'SingleTrip', params: {id: index} }">{{ trip.created_at }}</router-link>
             </li>
+
+            <li v-else>
+                <router-link :to="{ name: 'SingleTrip', params: {id: trip.id} }">{{ trip.created_at }}</router-link>
+            </li>
+
         </ul>
     </div>
 </template>
@@ -18,10 +23,12 @@ import dbEngine from '../dbConfig';
 export default {
     data() {
         return {
-            trips: []
+            trips: [],
+            dbEngine: ''
         }
     },
     created() {
+        this.dbEngine = dbEngine.dbEngine
 
         if( dbEngine.dbEngine == 'firebase' ) {
             db.ref('trips/').get()
@@ -36,6 +43,7 @@ export default {
             axios.get('https://tinaapi.greasydesign.sk/api/trips')
             .then(res => {
                 this.trips = res.data;
+                console.log(res)
             })
             .catch(err => {
                 
