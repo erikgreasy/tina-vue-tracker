@@ -55,9 +55,35 @@ export default {
                     })
 
                     this.graphEl = document.getElementById('graph');
-                    console.log(this.distance)
-                    Plotly.newPlot( this.graphEl, [this.distance, this.speed], {
-                        margin: { t: 0 } } );
+                    // console.log(this.distance)
+                    // Plotly.newPlot( this.graphEl, [this.distance, this.speed], {
+                    //     margin: { t: 0 } } );
+
+
+                         var layout = { shapes: [{
+                                'type': 'line',
+                                'x0': 0,
+                                'y0': 0,
+                                'x1': 10,
+                                'y1': .25,
+                                'line': {
+                                    'color': 'red',
+                                    'width': 3,
+                                }},
+                            ]};
+                    var oldData = {};
+                    Object.assign(oldData, layout.shapes[0])
+
+                    Plotly.newPlot(this.graphEl, [this.distance, this.speed], layout, {editable: true});
+                    this.graphEl.on('plotly_relayout', function(){
+
+                        if(  JSON.stringify(oldData) !== JSON.stringify(layout.shapes[0]) ) {
+                            alert( `x0: ${layout.shapes[0].x0}, y0: ${layout.shapes[0].y0}\nx1: ${layout.shapes[0].x1}, y1: ${layout.shapes[0].y1}` );
+                            Object.assign(oldData, layout.shapes[0])
+
+                        }
+
+                    });
                 })
                 .catch(err => {
                     console.log(err)
