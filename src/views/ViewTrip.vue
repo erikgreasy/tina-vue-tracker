@@ -12,7 +12,6 @@
 <script>
 import Plotly from 'plotly.js-dist';
 import db from '../firebaseinit';
-import dbEngine from '../dbConfig';
 
 const axios = require('axios').default;
 
@@ -40,7 +39,7 @@ export default {
         }
     },
     mounted() {
-        if( dbEngine.dbEngine == 'firebase') {
+        if( this.$dbEngine == 'firebase') {
             db.ref('trips/' + this.$route.params.id).get()
                 .then(snap => {
                     this.trip = snap.val();

@@ -33,7 +33,6 @@ import Speedometer from './../components/Speedometer.vue';
 import Clock from './../components/Clock.vue';
 import DistanceMeter from './../components/DistanceMeter.vue';
 import db from '../firebaseinit';
-import dbEngine from '../dbConfig';
 
 
 const axios = require('axios').default;
@@ -67,7 +66,7 @@ export default {
             self.timePassed = ( (actTime - this.startTiem)/1000 )
 
 
-            if( dbEngine.dbEngine == 'firebase' ) {
+            if( this.$dbEngine == 'firebase' ) {
                 db.ref('trips/' + this.tripId + '/logs').push({
                     speed: this.speed,
                     distance: this.distance,
@@ -98,7 +97,7 @@ export default {
         trackPosition() {
             if (navigator.geolocation) {
 
-                if( dbEngine.dbEngine == 'firebase' ) {
+                if( this.$dbEngine == 'firebase' ) {
                     let date = new Date();
                     let id = db.ref('trips/').push({
                         created_at: date.toISOString(),
@@ -175,7 +174,7 @@ export default {
             
 
 
-            if( dbEngine.dbEngine == 'firebase' ) {
+            if( this.$dbEngine == 'firebase' ) {
                 db.ref('trips/' + this.tripId + '/logs').push({
                     speed: this.speed,
                     distance: this.distance,

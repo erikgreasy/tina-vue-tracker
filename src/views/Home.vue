@@ -2,7 +2,7 @@
     <div>
         <h1>Past trips:</h1>
         <ul v-for="(trip, index) in trips" :key="index">
-            <li v-if="dbEngine.dbEngine == 'firebase'">
+            <li v-if="$dbEngine == 'firebase'">
                 <router-link :to="{ name: 'SingleTrip', params: {id: index} }">{{ trip.created_at }}</router-link>
             </li>
 
@@ -17,8 +17,6 @@
 <script>
 const axios = require('axios').default;
 import db from '../firebaseinit';
-import dbEngine from '../dbConfig';
-
 
 export default {
     data() {
@@ -28,9 +26,7 @@ export default {
         }
     },
     created() {
-        this.dbEngine = dbEngine.dbEngine
-
-        if( dbEngine.dbEngine == 'firebase' ) {
+        if( this.$dbEngine == 'firebase' ) {
             db.ref('trips/').get()
                 .then(snap => {
                     this.trips = snap.val()
