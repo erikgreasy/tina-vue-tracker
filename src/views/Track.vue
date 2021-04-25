@@ -95,6 +95,8 @@ export default {
 
         },
         trackPosition() {
+            this.startTiem = performance.now()
+
             if (navigator.geolocation) {
 
                 if( this.$dbEngine == 'firebase' ) {
@@ -222,7 +224,6 @@ export default {
     computed: {},
     
     created() {
-        this.startTiem = performance.now()
      
 
     },
